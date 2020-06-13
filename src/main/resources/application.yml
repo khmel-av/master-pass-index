@@ -1,0 +1,69 @@
+server:
+  # порт на котором поднимаем сервис
+  port: 8080
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
+    min-response-size: 10240
+spring:
+  application:
+    name: master-pass-index
+  boot:
+    admin:
+      client:
+        url: http://localhost:8090/public
+        username: admin
+        password: admin
+  # настройки подключения к бд
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: root1981
+    url: jdbc:postgresql://localhost/pass_card
+    username: postgres
+  # настройки флайвей
+  flyway:
+    locations: classpath:db/migration
+    schemas: ${spring.jpa.properties.hibernate.default_schema}
+    user: pass_card_dev
+    password:
+    enabled: true
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        show_sql: true
+        ddl-auto: none
+        # default schema
+        default_schema: mpi
+        format_sql: true
+        generate_statistics: true
+# настройки безопасности
+Security:
+  TokenPrefix: Bearer
+  HeaderAttr: Authorization
+  SigningKey: mpi2020
+  AccessTokenValidityMinit: 300
+  IgnorePaths: /**/public/**;/webjars/**;/v2/api-docs/**;/configuration/ui/**;/swagger-resources/**;/configuration/security/**;/swagger-ui.html/**;/swagger-ui.html#/**
+token:
+  prefix: Bearer
+header:
+  attr: Authorization
+# логирование
+logging:
+  file:
+    name: ${logging.file.path}/master-pass-index.log
+    path: logs
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        engine:
+          internal:
+            StatisticalLoggingSessionEventListener: WARN
+        type: trace
+    ru:
+      khmel:
+        mpi:
+          '*': DEBUG
+  pattern:
+    file: '"%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"'
