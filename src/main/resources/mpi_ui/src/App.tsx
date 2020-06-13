@@ -17,6 +17,7 @@ import {AdminComponent} from "./bisness-components/admin/component/admin.compone
 import RegistrationComponent from "./bisness-components/registration/component/registration.component";
 import AddCardComponent from "./bisness-components/card/add_card/component/add.card.component";
 import CheckCardComponent from "./bisness-components/card/check_card/component/check.card.container";
+import ProtectedRoute from "./bisness-components/protected_route/protected.route";
 
 
 class App extends React.Component {
@@ -29,15 +30,15 @@ class App extends React.Component {
             <div id="main-content-container">
               <Switch>
                 <Route path="/login" component={LoginComponent} />
-                <Route path="/all/card" component={PassCardListComponent} />
-                <Route path="/check/card" component={CheckCardComponent} />
-                <Route path="/news" component={NewsComponent} />
-                <Route path="/setting" component={SettingComponent} />
-                <Route path="/admin" component={AdminComponent} />
-                <Route path="/profile" component={ProfileComponent} />
-                <Route path="/feedback" component={FeedbackComponent} />
                 <Route path="/register" component={RegistrationComponent} />
-                <Route path="/create/card" component={AddCardComponent} />
+                <Route path="/news" component={NewsComponent} />
+                <Route path="/feedback" component={FeedbackComponent} />
+                <Route path="/check/card" component={CheckCardComponent} />
+                <ProtectedRoute allowedRoles={['admin', 'user']} path="/profile" component={ProfileComponent} />
+                <ProtectedRoute allowedRoles={['admin', 'user']} path="/create/card" component={AddCardComponent} />
+                <ProtectedRoute allowedRoles={['admin', 'user']} path="/all/card" component={PassCardListComponent} />
+                <ProtectedRoute allowedRoles={['admin', 'user']} path="/setting" component={SettingComponent} />
+                <ProtectedRoute allowedRoles={['admin']} path="/admin" component={AdminComponent} />
                 <Route component={HomeContainer} />
               </Switch>
               <br />
