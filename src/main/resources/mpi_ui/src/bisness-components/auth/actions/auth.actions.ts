@@ -1,7 +1,7 @@
 import {IUser} from "../../user/model/user.model";
 import {IAuth} from "../model/auth.model";
 import {authClient} from "../axios/client/auth.client";
-import {client} from "../../../axios/client";
+// import {client} from "../../../axios/client";
 
 export const authTypes = {
     LOGIN: '[AUTH] LOGIN',

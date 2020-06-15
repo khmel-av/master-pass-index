@@ -7,6 +7,8 @@ import {userReducer} from "../bisness-components/user/reducer/user.reducer";
 import {homeReducer} from "../bisness-components/home/reducer/home.reducer";
 import {ITypeFeedback} from "../bisness-components/feedback/model/type.feedback.modal";
 import {typeFeedbackReducer} from "../bisness-components/feedback/reducer/type.feedback.reducer";
+import {ICountry} from "../bisness-components/address/model/country.model";
+import {countryReducer} from "../bisness-components/address/reducer/country.reducer";
 
 export interface IAuthState {
   currentUser: IUser
@@ -28,12 +30,17 @@ export interface ITypeFeedbackState {
   typeFeedbacks: ITypeFeedback[]
 }
 
+export interface ICountryState {
+  countries: ICountry[]
+}
+
 export interface IState {
   auth: IAuthState,
   user: IUserState,
   cards: IPassCardState,
   home: IHomeState,
-  typeFeedbacks: ITypeFeedbackState
+  typeFeedbacks: ITypeFeedbackState,
+  countries: ICountryState
 }
 
 export const state = combineReducers<IState>({
@@ -41,5 +48,6 @@ export const state = combineReducers<IState>({
   user: userReducer,
   cards: cardReducer,
   home: homeReducer,
-  typeFeedbacks: typeFeedbackReducer
+  typeFeedbacks: typeFeedbackReducer,
+  countries: countryReducer
 });

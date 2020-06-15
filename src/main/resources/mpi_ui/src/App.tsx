@@ -14,7 +14,7 @@ import FeedbackComponent from "./bisness-components/feedback/component/feedback.
 import {NewsComponent} from "./bisness-components/news/component/news.component";
 import {SettingComponent} from "./bisness-components/setting/component/setting.component";
 import {AdminComponent} from "./bisness-components/admin/component/admin.component";
-import RegistrationComponent from "./bisness-components/registration/component/registration.component";
+import RegistrationComponent from "./bisness-components/user/component/registration.container";
 import AddCardComponent from "./bisness-components/card/add_card/component/add.card.component";
 import CheckCardComponent from "./bisness-components/card/check_card/component/check.card.container";
 import ProtectedRoute from "./bisness-components/protected_route/protected.route";
