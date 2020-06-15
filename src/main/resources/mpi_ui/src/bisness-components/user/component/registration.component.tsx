@@ -1,36 +1,10 @@
 import * as React from 'react';
-import {RouteComponentProps} from "react-router";
-import {IState} from "../../../reducers";
-import {connect} from "react-redux";
 import Button from "reactstrap/lib/Button";
 import {Combobox} from "react-widgets";
 import 'react-widgets/dist/css/react-widgets.css';
-import {IUser} from "../../user/model/user.model";
-import {saveUser} from "../../user/actions/user.actions";
-
-interface IComponentState {
-    firstName: string,
-    lastName: string,
-    middleName: string,
-    birth: string,
-    email: string,
-    username: string,
-    password: string,
-    countryId: number,
-    regionId: number,
-    districtId: number,
-    localityId: number,
-    streetId: number,
-    home: string,
-    build: string,
-    flat: string,
-    room: string,
-    zipcode: string
-}
-
-export interface IComponentProps extends RouteComponentProps<{}> {
-    saveUser
-}
+import {IUser} from "../model/user.model";
+import {IComponentProps, IComponentState} from "./registration.container";
+import {ComboboxMessages} from "react-widgets/lib/Combobox";
 
 export class RegistrationComponent extends React.Component<IComponentProps, IComponentState> {
     constructor(props: any) {
@@ -43,7 +17,7 @@ export class RegistrationComponent extends React.Component<IComponentProps, ICom
             email: '',
             username: '',
             password: '',
-            countryId: 1,
+            countryId: 0,
             regionId: 2,
             districtId: 0,
             localityId: 1,
@@ -52,8 +26,17 @@ export class RegistrationComponent extends React.Component<IComponentProps, ICom
             build: '',
             flat: '',
             room: '',
-            zipcode: ''
+            zipcode: '',
+            countryError: {
+                open: 'Ошибка открытия',
+                emptyList: 'Ошибка загрузки списка стран',
+                emptyFilter: 'По данному фильтру стран не найдено'
+            }
         }
+    }
+
+    componentDidMount() {
+        this.props.getCountryList(" ");
     }
 
     public updateFirstName = (e: any) => {
@@ -164,6 +147,22 @@ export class RegistrationComponent extends React.Component<IComponentProps, ICom
         })
     };
 
+    public updateCountry = (e: any) => {
+        const countryId = e.id;
+        this.setState({
+            ...this.state,
+            countryId
+
+        })
+    };
+
+    public filterCountryName(country, value) {
+        const countryNames = country.name.toLowerCase()
+        const countryName  = value.toLowerCase();
+
+        return countryNames.indexOf(countryName) === 0
+    }
+
     public submitRegistration = async (e: any) => {
         e.preventDefault();
         const { firstName, lastName, middleName, birth,
@@ -219,11 +218,7 @@ export class RegistrationComponent extends React.Component<IComponentProps, ICom
     };
 
     public render() {
-        const countryis = [
-            { id: 1, name: "Россия"},
-            { id: 2, name: "Казахстан"},
-            { id: 3, name: "Белорусь" }
-        ];
+        const countryData = this.props.countries.countries;
 
         const regions = [
             { id: 1, name: ""},
@@ -251,10 +246,13 @@ export class RegistrationComponent extends React.Component<IComponentProps, ICom
 
         const chooseCountry = (
             <Combobox
-                data={countryis}
+                data={countryData}
                 valueField="id"
+                onChange={this.updateCountry}
+                filter={this.filterCountryName}
                 textField="name"
                 placeholder="Выберите страну"
+                messages={this.state.countryError}
             />
         );
 
@@ -553,10 +551,3 @@ export class RegistrationComponent extends React.Component<IComponentProps, ICom
         );
     }
 }
-
-const mapStateToProps = (state: IState) => (state.user);
-const mapDispatchToProps = {
-    saveUser
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(RegistrationComponent);
