@@ -4,16 +4,21 @@ import {client} from "../../../../axios/client";
 
 const authContext = '/user';
 const urls = {
-    auth: authContext + '/public/auth',
-    currentUser: authContext + '/current'
+  token: '/public/token',
+  auth: authContext + '/public/auth',
+  currentUser: '/user/current'
 };
 
 export const authClient = {
-    login(auth: IAuth): AxiosPromise<IAuth> {
-        return client.post(urls.auth, auth);
-    },
+  getToken(auth: IAuth): AxiosPromise<string> {
+    return client.post(urls.token, auth);
+  },
 
-    currentUser(): AxiosPromise<void> {
-        return client.get(urls.currentUser);
-    }
+  login(auth: IAuth): AxiosPromise<IAuth> {
+    return client.post(urls.auth, auth);
+  },
+
+  currentUser(): AxiosPromise<void> {
+    return client.get(urls.currentUser);
+  }
 };

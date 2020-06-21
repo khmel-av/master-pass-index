@@ -2,7 +2,6 @@ package ru.khmel.mpi.user.service.impl;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -47,8 +46,11 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   @Autowired
   private final RoleRepository roleRepository;
+
   @Autowired
   private AddressService addressService;
+  @Autowired
+  private UserDetailsServiceImpl userDetailsService;
 
   public UserServiceImpl(final UserRepository userRepository,
                          final RoleRepository roleRepository) {
@@ -76,11 +78,9 @@ public class UserServiceImpl implements UserService {
    * @Inherited
    */
   @Override
-  public UserDto getCurrentUser() {
-    long userId = 0L;
-    Optional<User> userOpt = this.userRepository.findById(userId);
-    if (userOpt.isPresent()) {
-      return getUserDto(userOpt.get());
+  public UserDto getUser( User user) {
+    if (user != null) {
+      return getUserDto(user);
     }
 
     return null;
@@ -90,10 +90,10 @@ public class UserServiceImpl implements UserService {
    * @Inherited
    */
   @Override
-  public UserDto getUser(long userId) {
+  public User getUser(long userId) {
     Optional<User> userOpt = this.userRepository.findById(userId);
     if (userOpt.isPresent()) {
-      return getUserDto(userOpt.get());
+      return userOpt.get();
     }
 
     return null;
@@ -104,11 +104,11 @@ public class UserServiceImpl implements UserService {
    */
   @Override
   public UserDto addUser(UserDto userDto) throws ValidationException {
-//    List<User> userList = this.userRepository.findByUsername(userDto.getFirstName());
-//    if (!userList.isEmpty()) {
-//      throw new ValidationException("Пользователь: " + userDto.getFirstName() +
-//          " уже существует");
-//    }
+    User checkUser = (User) this.userDetailsService.loadUserByUsername(userDto.getLogin());
+    if (checkUser != null) {
+      throw new ValidationException("Пользователь: " + userDto.getFirstName() +
+          " уже существует");
+    }
     AddressDto addressDto = this.addressService.addAddress(userDto.getAddress());
 
     User user = getUser(userDto);
@@ -185,11 +185,10 @@ public class UserServiceImpl implements UserService {
    * @Inherited
    */
   @Override
-  public String getAuth(AuthDto authDto) throws ValidationException {
-    List<User> userList = this.userRepository
-        .findByUsernameAndPassword(authDto.getLogin(), authDto.getPassword());
-    if (userList != null && !userList.isEmpty()) {
-      return generateToken(getUserDto(userList.get(0)).getId());
+  public String getToken(AuthDto authDto) throws ValidationException {
+    User user = (User) userDetailsService.loadUserByUsername(authDto.getLogin());
+    if (user != null) {
+      return generateToken(user.getId());
     }
 
     return null;
@@ -217,6 +216,13 @@ public class UserServiceImpl implements UserService {
 
   }
 
+  /**
+   * Метод заполняет DTO объект пользователя
+   *
+   * @param user
+   *
+   * @return
+   */
   private UserDto getUserDto(User user) {
     UserDto userDto = new UserDto();
     userDto.setId(user.getId());
@@ -234,6 +240,15 @@ public class UserServiceImpl implements UserService {
     return userDto;
   }
 
+  /**
+   * Метод возращяет сокращенное ФИО пользователя
+   *
+   * @param firstName
+   * @param lastName
+   * @param middleName
+   *
+   * @return
+   */
   private String getShortName(String firstName, String lastName,
                               String middleName) {
     StringBuilder sb = new StringBuilder();
@@ -248,6 +263,13 @@ public class UserServiceImpl implements UserService {
     return sb.toString();
   }
 
+  /**
+   * Метод заменяет значения ролей для UI
+   *
+   * @param roles
+   *
+   * @return
+   */
   private List<String> getRoleDtoList(Set<Role> roles) {
     List<String> roleDtoList = new ArrayList();
     for (Role item : roles) {
@@ -263,6 +285,13 @@ public class UserServiceImpl implements UserService {
     return roleDtoList;
   }
 
+  /**
+   * Метод заполняет объект пользователя
+   *
+   * @param userDto
+   *
+   * @return
+   */
   private User getUser(UserDto userDto) {
     User user = new User();
     user.setId(userDto.getId());

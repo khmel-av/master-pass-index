@@ -3,6 +3,7 @@ package ru.khmel.mpi.user.service;
 import ru.khmel.mpi.user.dto.AuthDto;
 import ru.khmel.mpi.user.dto.UserDto;
 import ru.khmel.mpi.exception.ValidationException;
+import ru.khmel.mpi.user.jpa.entity.User;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface UserService {
    *
    * @return
    */
-  UserDto getCurrentUser();
+  UserDto getUser(User user);
 
   /**
    * Метод возвращает пользователя по ID
@@ -31,7 +32,7 @@ public interface UserService {
    *
    * @return
    */
-  UserDto getUser(long userId);
+  User getUser(long userId);
 
   /**
    * Метод добавляет пользователя
@@ -82,7 +83,7 @@ public interface UserService {
    *
    * @throws ValidationException
    */
-  String getAuth(AuthDto authDto) throws ValidationException;
+  String getToken(AuthDto authDto) throws ValidationException;
 
   /**
    * Метод возвращает пользователя при успешной аутентификации

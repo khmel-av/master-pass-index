@@ -495,7 +495,7 @@ public class PassCardServiceImpl implements PassCardService {
     passCardDto.setExpirationDate(passCard.getExpirationDate());
     System.out.println("userId: " + passCard.getUserId());
     System.out.println("userDto: " + this.userService.getUser(passCard.getUserId()));
-    passCardDto.setUser(this.userService.getUser(passCard.getUserId()));
+    passCardDto.setUser(this.userService.getUser(this.userService.getUser(passCard.getUserId())));
     passCardDto.setDescription(passCard.getDescription());
     passCardDto.setCreateDate(passCard.getCreateDate());
 
